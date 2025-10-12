@@ -1,0 +1,12 @@
+{
+  "files": {
+    "main.css": "/ccsd-roadmap/static/css/main.31d6cfe0.css",
+    "main.js": "/ccsd-roadmap/static/js/main.7d30f6b3.js",
+    "index.html": "/ccsd-roadmap/index.html",
+    "main.7d30f6b3.js.map": "/ccsd-roadmap/static/js/main.7d30f6b3.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.31d6cfe0.css",
+    "static/js/main.7d30f6b3.js"
+  ]
+}
