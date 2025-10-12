@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Home, ChevronLeft, Bus, MapPin, School, BookOpen, FileEdit } from 'lucide-react';
+import { Home, ChevronLeft, Bus, MapPin, School, BookOpen, FileEdit, ClipboardList, Truck, Send } from 'lucide-react';
 
 const CCSDRoadmap = () => {
   const [currentScreen, setCurrentScreen] = useState('welcome');
@@ -345,18 +345,27 @@ const CCSDRoadmap = () => {
                 </ol>
               </div>
             )}
-            {studentCategory && (
-              <div>
-                <h3 className="font-bold text-gray-800 mb-2">Find more information here:</h3>
-                <div className="space-y-2">
-                  <a href="https://www.ccsdschools.com/family-resources/registration-and-enrollment" target="_blank" rel="noopener noreferrer" className="block text-blue-600 hover:text-blue-700">Registration</a>
-                  <a href="https://www.charlestoncountyschools.gov/departments/operations/transportation" target="_blank" rel="noopener noreferrer" className="block text-blue-600 hover:text-blue-700">Transportation</a>
-                  <a href="https://schoolchoice.ccsdschools.com/home" target="_blank" rel="noopener noreferrer" className="block text-blue-600 hover:text-blue-700">Application Portal</a>
-                </div>
+          {studentCategory && (
+            <div>
+              <h3 className="font-bold text-gray-800 mb-2">Find more information here:</h3>
+              <div className="space-y-2">
+                <a href="https://www.ccsdschools.com/family-resources/registration-and-enrollment" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-blue-600 hover:text-blue-700">
+                  <ClipboardList className="w-4 h-4" />
+                  <span>Registration</span>
+                </a>
+                <a href="https://www.charlestoncountyschools.gov/departments/operations/transportation" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-blue-600 hover:text-blue-700">
+                  <Truck className="w-4 h-4" />
+                  <span>Transportation</span>
+                </a>
+                <a href="https://schoolchoice.ccsdschools.com/home" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-blue-600 hover:text-blue-700">
+                  <Send className="w-4 h-4" />
+                  <span>Application Portal</span>
+                </a>
               </div>
-            )}
-          </div>
-        )}
+            </div>
+          )}
+        </div>
+      )}
         <div className="flex justify-center gap-4">
           <button onClick={handleBack} className="px-6 py-3 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 flex items-center gap-2"><ChevronLeft className="w-4 h-4" />Back</button>
           <button onClick={handleNext} className="flex-1 px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600">Next</button>

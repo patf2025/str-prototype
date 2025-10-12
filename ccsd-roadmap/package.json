@@ -2,7 +2,7 @@
   "name": "ccsd-roadmap",
   "version": "0.1.0",
   "name": "ccsd-roadmap",
-  "homepage": "https://patf2025.github.io/ccsd-roadmap",
+  "homepage": "https://patf2025.github.io/str-prototype",
   "private": true,
   "dependencies": {
     "@testing-library/jest-dom": "^5.17.0",
