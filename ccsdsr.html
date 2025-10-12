@@ -1,0 +1,1750 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to the School App</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #e0f2fe; /* Light blue background */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px; /* Add some padding for smaller screens */
+            box-sizing: border-box;
+        }
+        .container {
+            background-color: #ffffff;
+            border-radius: 1.5rem; /* More rounded corners */
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            padding: 2.5rem; /* Increased padding */
+            width: 100%;
+            max-width: 500px; /* Max width for larger screens */
+            text-align: center;
+            position: relative; /* For absolute positioning of the top-left icon and grade display */
+        }
+        .icon-top-left {
+            position: absolute;
+            top: 1.5rem;
+            left: 1.5rem;
+        }
+        .selected-grade-display {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem; /* Position to the top right */
+            font-size: 0.875rem; /* text-sm */
+            font-weight: 500; /* font-medium */
+            color: #4a5568; /* text-gray-700 */
+        }
+        .gradient-button {
+            background-image: linear-gradient(to right, #6366f1, #3b82f6); /* Blue gradient */
+            transition: all 0.3s ease;
+        }
+        .gradient-button:hover {
+            background-image: linear-gradient(to right, #4f46e5, #2563eb);
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+        }
+        .secondary-button {
+            background-color: #e2e8f0; /* Light gray */
+            color: #4a5568; /* Darker gray text */
+            transition: all 0.3s ease;
+        }
+        .secondary-button:hover {
+            background-color: #cbd5e0; /* Slightly darker gray on hover */
+            box-shadow: 0 44px 15px rgba(0, 0, 0, 0.1);
+        }
+        select {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='currentColor'%3E%3Cpath fill-rule='evenodd' d='M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z' clip-rule='evenodd'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 0.75rem center;
+            background-size: 1.5em 1.5em;
+        }
+        /* Style for the link to make it look like a clickable block */
+        .zone-school-link {
+            display: block; /* Make the anchor tag a block element */
+            text-decoration: none; /* Remove underline */
+            color: inherit; /* Inherit color from parent */
+            cursor: pointer; /* Indicate it's clickable */
+        }
+        .zone-school-link:hover .text-blue-800 {
+            color: #1e40af; /* Darker blue on hover */
+        }
+        .zone-school-link:hover .text-blue-600 {
+            color: #1e40af; /* Darker blue on hover for icon */
+        }
+        /* Hidden by default */
+        .hidden {
+            display: none;
+        }
+        .message-box {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+        .message-box.success {
+            background-color: #4CAF50;
+        }
+        .message-box.error {
+            background-color: #f44336;
+        }
+        .radio-group {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .radio-option {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+        .radio-option input[type="radio"] {
+            margin-right: 8px;
+            transform: scale(1.2); /* Slightly larger radio buttons */
+        }
+        /* New styling for radio-group-vertical */
+        .radio-group-vertical {
+            display: flex;
+            flex-direction: column; /* Stack vertically */
+            align-items: flex-start; /* Align radios to the left */
+            gap: 10px; /* Space between items */
+            margin-bottom: 20px;
+            padding-left: 20px; /* Indent slightly */
+        }
+        .map-link {
+            color: #3b82f6; /* Blue link color */
+            text-decoration: underline;
+            margin-left: 10px;
+        }
+        .map-link:hover {
+            color: #2563eb; /* Darker blue on hover */
+        }
+        /* Styling for the last page elements */
+        #fireworks-display {
+            position: relative; /* Make it a positioning context for absolute children */
+            display: flex; /* Keep flex for centering the image */
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%; /* Ensure it takes full width */
+            min-height: 200px; /* Give it some height */
+        }
+        /* Removed #fireworks-gif styling as the element is removed */
+    </style>
+</head>
+<body>
+    <div class="container" id="main-container">
+        <!-- Top-left icon -->
+        <div class="icon-top-left">
+            <img src="https://placehold.co/48x48/3b82f6/ffffff?text=School%20District" alt="School District Icon" class="w-12 h-auto rounded-full">
+        </div>
+
+        <!-- Selected Grade Display -->
+        <div id="selected-grade-display" class="selected-grade-display hidden"></div>
+
+        <!-- Welcome Section -->
+        <div id="welcome-section">
+            <h1 class="text-4xl font-extrabold text-blue-800 mb-2">CCSD Student Roadmap</h1>
+             <h1 class="text-2xl font-bold text-blue-700 mb-8 mt-4">
+                Welcome!
+            </h1>
+            <p class="text-lg text-gray-600 mb-8">Let's start by selecting your student's grade level</p>
+
+            <div class="mb-8">
+                <label for="grade-select" class="block text-left text-gray-700 text-base font-medium mb-2">Select Student's Grade:</label>
+                <div class="relative">
+                    <select id="grade-select" name="grade" class="block w-full px-4 py-3 pr-8 rounded-lg border-2 border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-800 text-base bg-white">
+                        <option value="">-- Please select --</option>
+                        <option value="PreK3">PreK3</option>
+                        <option value="PreK4">PreK4</option>
+                        <option value="K">Kindergarten</option>
+                        <option value="1st">1st Grade</option>
+                        <option value="2nd">2nd Grade</option>
+                        <option value="3rd">3rd Grade</option>
+                        <option value="4th">4th Grade</option>
+                        <option value="5th">5th Grade</option>
+                        <option value="6th">6th Grade</option>
+                        <option value="7th">7th Grade</option>
+                        <option value="8th">8th Grade</option>
+                        <option value="9th">9th Grade</option>
+                        <option value="10th">10th Grade</option>
+                        <option value="11th">11th Grade</option>
+                        <option value="12th">12th Grade</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- New link to Transportation Information page -->
+            <div class="mb-8 mt-4 text-left">
+                <button id="transportation-link-button" class="flex items-center space-x-3 text-blue-700 hover:text-blue-900 font-medium text-lg">
+                    <img src="https://placehold.co/32x32/FF8C00/FFFFFF?text=T" alt="Transportation Icon" class="rounded-md">
+                    <span>Transportation Information</span>
+                </button>
+            </div>
+
+            <!-- New question for school options, indented -->
+            <div id="school-options-question" class="hidden pl-4 text-left">
+                <h3 class="text-xl font-semibold text-gray-800 mb-4 mt-8">Would you like to see a list of school options in CCSD?</h3>
+                <div class="radio-group mb-8 justify-start">
+                    <label class="radio-option">
+                        <input type="radio" name="school-options-answer" value="yes" id="school-options-yes">
+                        <span class="text-lg text-gray-700">Yes</span>
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="school-options-answer" value="no" id="school-options-no">
+                        <span class="text-lg text-gray-700">No</span>
+                    </label>
+                </div>
+            </div>
+
+            <button id="whats-next-button" class="gradient-button text-white font-bold py-3 px-8 rounded-full text-lg shadow-lg hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-blue-300 transition duration-300 ease-in-out hidden">
+                Next
+            </button>
+        </div>
+
+        <!-- Student Type Section (hidden by default) -->
+        <div id="student-type-section" class="hidden">
+            <h1 class="text-4xl font-extrabold text-blue-800 mb-2">CCSD Student Roadmap</h1>
+            <h2 class="4xl font-bold text-blue-700 mb-8 mt-4">What type of student are you?</h2>
+
+            <div class="space-y-4 mb-8 flex flex-col items-center">
+                <button id="new-student-button" class="gradient-button text-white font-bold py-3 px-8 rounded-full text-lg shadow-lg hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-blue-300 transition duration-300 ease-in-out w-3/4">
+                    NEW
+                </button>
+                <button id="returning-student-button" class="gradient-button text-white font-bold py-3 px-8 rounded-full text-lg shadow-lg hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-blue-300 transition duration-300 ease-in-out w-3/4">
+                    RETURNING (from last year)
+                </button>
+            </div>
+
+            <!-- Divider -->
+            <div class="border-t-2 border-gray-200 my-8 w-full"></div>
+
+            <div class="space-y-4 mb-8 flex flex-col items-center">
+                <!-- Removed Additional Programs button from here -->
+            </div>
+
+
+            <button id="back-button-student-type" class="secondary-button font-bold py-3 px-8 rounded-full text-lg shadow-md hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-gray-300 transition duration-300 ease-in-out">
+                Back
+            </button>
+            <button id="home-button-student-type" class="secondary-button font-bold py-3 px-8 rounded-full text-lg shadow-md hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-gray-300 transition duration-300 ease-in-out ml-4">
+                Home
+            </button>
+        </div>
+
+        <!-- Zone School Question Section (hidden by default) -->
+        <div id="zone-school-question-section" class="hidden">
+            <!-- New main heading -->
+            <h1 class="text-4xl font-extrabold text-blue-800 mb-2">CCSD Student Roadmap</h1>
+            <!-- Existing heading converted to subheading -->
+            <h2 class="text-2xl font-bold text-blue-700 mb-6 mt-4">NEW STUDENT</h2>
+
+            <!-- Moved "Find your zone school" here -->
+            <a href="https://www.croppermap.com/charleston/" target="_blank" rel="noopener noreferrer" class="zone-school-link mb-10 p-4 bg-blue-50 rounded-xl flex items-center justify-start space-x-3 border border-blue-200 hover:bg-blue-100 transition duration-200">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-home text-blue-600">
+                    <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                    <polyline points="9 22 9 12 15 12 15 22"/>
+                </svg>
+                <span class="text-blue-800 text-lg font-semibold">Find your zone school</span>
+            </a>
+
+            <h2 class="text-2xl font-bold text-blue-700 mb-8 mt-4">
+                Will you attend your zone school?
+            </h2>
+
+            <div class="radio-group mb-8">
+                <label class="radio-option">
+                    <input type="radio" name="zone-school-answer" value="yes" id="zone-school-yes">
+                    <span class="text-lg text-gray-700">Yes</span>
+                </label>
+                <label class="radio-option">
+                    <input type="radio" name="zone-school-answer" value="no" id="zone-school-no">
+                    <span class="text-lg text-gray-700">No</span>
+                    </label>
+            </div>
+
+            <!-- Content that only shows if "Yes" is selected -->
+            <div id="zone-school-yes-content" class="hidden">
+                <div id="registration-address-info" class="text-left text-gray-700 text-base leading-relaxed mb-8 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                    <p class="mb-2">1. Registration is needed</p>
+                    <p>2. Address Verification is needed</p>
+                </div>
+
+                <!-- Aligned to left -->
+                <h3 class="text-xl font-semibold text-gray-800 mb-4 text-left">Find more information here:</h3>
+                <!-- Aligned to left -->
+                <div class="flex flex-row space-x-4 items-center mb-8 justify-start">
+                    <a href="https://www.ccsdschools.com/registration" target="_blank" rel="noopener noreferrer" class="flex items-center space-x-3 text-blue-700 hover:text-blue-900 font-medium text-lg">
+                        <img src="https://placehold.co/32x32/6366f1/ffffff?text=R" alt="Registration Icon" class="rounded-md">
+                        <span>Registration</span>
+                    </a>
+                    <a href="https://www.ccsdschools.com/departments/operations/transportation" target="_blank" rel="noopener noreferrer" class="flex items-center space-x-3 text-blue-700 hover:text-blue-900 font-medium text-lg">
+                        <img src="https://placehold.co/32x32/3b82f6/ffffff?text=T" alt="Transportation Icon" class="rounded-md">
+                        <span>Transportation</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Content that only shows if "No" is selected -->
+            <div id="zone-school-no-content" class="hidden text-left text-gray-700 text-base leading-relaxed">
+                <p class="mb-6">If you are not attending your zone school, you are considered a Choice Student (one who attends a magnet/charter school) or a Transfer Student (one who attends a not-zoned school and the school attending is not a choice school), in most cases</p>
+
+                <!-- New: CCSD Application Options link -->
+                <div class="mb-8 mt-4 text-left">
+                    <a href="https://www.ccsdschools.com/family-resources/ccsd-schools-and-programs-that-require-an-application" target="_blank" rel="noopener noreferrer" class="flex items-center space-x-3 text-blue-700 hover:text-blue-900 font-medium text-lg">
+                        <img src="https://placehold.co/32x32/800080/FFFFFF?text=A" alt="Application Icon" class="rounded-md">
+                        <span>CCSD Application Options</span>
+                    </a>
+                </div>
+
+                <label for="student-category-select" class="block text-gray-700 text-base font-medium mb-2">Select your student category:</label>
+                <div class="relative mb-8">
+                    <select id="student-category-select" name="student-category" class="block w-full px-4 py-3 pr-8 rounded-lg border-2 border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-800 text-base bg-white">
+                        <option value="">-- Please select --</option>
+                        <option value="Choice">Choice (Magnet/Charter)</option>
+                        <option value="Transfer">Transfer Student</option>
+                    </select>
+                </div>
+
+                <!-- Content for Choice students, hidden by default -->
+                <div id="choice-student-content" class="hidden">
+                    <h3 class="text-lg font-medium text-gray-700 mb-4">NEW STUDENT (CHOICE)</h3>
+                    <h4 class="text-xl font-semibold text-gray-800 mb-4">This is what you'll need:</h4>
+                    <ul class="list-disc list-inside text-left space-y-2 mb-8 pl-4">
+                        <li>1. Submit a Choice application (Opens January-February)</li>
+                        <li id="register-text-choice"></li> <!-- Unique ID for choice text -->
+                        <li>3. Address Verification (Due June 30)</li>
+                    </ul>
+                </div>
+
+                <!-- Find more information here section for "No" path -->
+                <h3 class="text-xl font-semibold text-gray-800 mb-4 text-left">Find more information here:</h3>
+                <div class="flex flex-row space-x-4 items-center mb-8 justify-start">
+                    <a href="https://www.ccsdschools.com/registration" target="_blank" rel="noopener noreferrer" class="flex items-center space-x-3 text-blue-700 hover:text-blue-900 font-medium text-lg">
+                        <img src="https://placehold.co/32x32/6366f1/ffffff?text=R" alt="Registration Icon" class="rounded-md">
+                        <span>Registration</span>
+                    </a>
+                    <a href="https://www.ccsdschools.com/departments/operations/transportation" target="_blank" rel="noopener noreferrer" class="flex items-center space-x-3 text-blue-700 hover:text-blue-900 font-medium text-lg">
+                        <img src="https://placehold.co/32x32/3b82f6/ffffff?text=T" alt="Transportation Icon" class="rounded-md">
+                        <span>Transportation</span>
+                    </a>
+                    <!-- Moved Application Portal here -->
+                    <a href="https://schoolchoice.ccsdschools.com/home" target="_blank" rel="noopener noreferrer" class="flex items-center space-x-3 text-blue-700 hover:text-blue-900 font-medium text-lg">
+                        <img src="https://placehold.co/24x24/4f46e5/ffffff?text=AP" alt="Application Portal Icon" class="ml-2 rounded-md">
+                        <span>Application Portal</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Buttons for Zone School Question Section -->
+            <div class="flex justify-center mt-8">
+                <button id="back-button-zone-school" class="secondary-button font-bold py-3 px-8 rounded-full text-lg shadow-md hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-gray-300 transition duration-300 ease-in-out">
+                    Back
+                </button>
+                <!-- This is the Next button for the "NEW STUDENT" page -->
+                <button id="whats-next-zone-school-button" class="gradient-button text-white font-bold py-3 px-8 rounded-full text-lg shadow-lg hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-blue-300 transition duration-300 ease-in-out ml-4 hidden">
+                    Next
+                </button>
+                <button id="home-button-zone-school" class="secondary-button font-bold py-3 px-8 rounded-full text-lg shadow-md hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-gray-300 transition duration-300 ease-in-out ml-4">
+                    Home
+                </button>
+            </div>
+        </div>
+
+        <!-- Additional Programs Section (NEW) -->
+        <div id="additional-programs-section" class="hidden">
+            <h1 class="text-3xl font-extrabold text-blue-800 mb-2">NEW OR RETURNING STUDENTS</h1>
+            <h2 class="text-2xl font-bold text-blue-700 mb-8 mt-4">Additional Programs</h2>
+
+            <div class="text-left text-gray-700 text-base leading-relaxed mb-8">
+                <p class="mb-4">Interested in Gifted & Talented:?</p>
+                <div class="flex items-center space-x-3 mb-6 justify-start">
+                    <a href="https://www.ccsdschools.com/departments/instructional-programs/gifted-and-talented" target="_blank" rel="noopener noreferrer" class="flex items-center space-x-3 text-blue-700 hover:text-blue-900 font-medium text-lg">
+                        <img src="https://placehold.co/32x32/4f46e5/ffffff?text=G" alt="Gifted & Talented Icon" class="rounded-md">
+                        <span>Gifted & Talented Program</span>
+                    </a>
+                </div>
+
+                <p class="mb-4">Interested in Art Program?</p>
+                <div class="flex items-center space-x-3 mb-6 justify-start">
+                    <a href="https://www.ccsdschools.com/departments/instructional-programs/visual-and-performing-arts" target="_blank" rel="noopener noreferrer" class="flex items-center space-x-3 text-blue-700 hover:text-blue-900 font-medium text-lg">
+                        <img src="https://placehold.co/32x32/3b82f6/ffffff?text=A" alt="Art Icon" class="rounded-md">
+                        <span>Visual and Performing Arts Program</span>
+                    </a>
+                </div>
+
+                <p class="text-red-600 text-lg mt-8">On this page we could list other available programs for students and display them all per the grade selected</p>
+            </div>
+
+            <button id="back-button-additional-programs" class="secondary-button font-bold py-3 px-8 rounded-full text-lg shadow-md hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-gray-300 transition duration-300 ease-in-out">
+                Back
+            </button>
+            <button id="whats-next-additional-programs-button" class="gradient-button text-white font-bold py-3 px-8 rounded-full text-lg shadow-lg hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-blue-300 transition duration-300 ease-in-out ml-4">
+                Next
+            </button>
+            <button id="home-button-additional-programs" class="secondary-button font-bold py-3 px-8 rounded-full text-lg shadow-md hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-gray-300 transition duration-300 ease-in-out ml-4">
+                Home
+            </button>
+        </div>
+
+
+        <!-- Registration Section (formerly Enrollment) -->
+        <div id="registration-section" class="hidden">
+            <h1 class="text-4xl font-extrabold text-blue-800 mb-2">CCSD Student Roadmap</h1>
+            <h2 class="text-2xl font-bold text-blue-700 mb-6 mt-4">RETURNING STUDENT</h2>
+
+            <!-- Moved "Find your zone school" here -->
+            <a href="https://www.croppermap.com/charleston/" target="_blank" rel="noopener noreferrer" class="zone-school-link mb-10 p-4 bg-blue-50 rounded-xl flex items-center justify-start space-x-3 border border-blue-200 hover:bg-blue-100 transition duration-200">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-home text-blue-600">
+                    <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                    <polyline points="9 22 9 12 15 12 15 22"/>
+                </svg>
+                <span class="text-blue-800 text-lg font-semibold">Find your zone school</span>
+            </a>
+
+            <!-- PKLogic Section (hidden by default) -->
+            <div id="pk-logic" class="hidden text-left text-gray-700 text-base leading-relaxed">
+                <p class="mb-4">You must receive an email with a SNAP code to <strong>register</strong> your student to the school where you accepted the seat. You will then follow the instructions on this web page.</p>
+                <p>
+                    <a href="https://www.ccsdschools.com/family-resources/registration-and-enrollment" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline font-medium">
+                        Visit the Registration and Enrollment Page
+                    </a>
+                </p>
+            </div>
+
+            <!-- K-12Logic Section (hidden by default) -->
+            <div id="k12-logic" class="hidden text-left text-gray-700 text-base leading-relaxed">
+                <p class="mb-4">All K-12th students <strong>must register</strong> to their zone school. If a student accepted a seat at a Transfer or Choice school, the student's registration information will be transferred internally.</p>
+            </div >
+
+            <!-- Checkbox for not attending zone school -->
+            <div class="flex items-center justify-start mb-6 mt-8">
+                <input type="checkbox" id="not-attend-zone-school" class="form-checkbox h-5 w-5 text-blue-600 rounded focus:ring-blue-500">
+                <label for="not-attend-zone-school" class="ml-2 text-lg text-gray-700">Select if you <strong>will not</strong> attend your zone school</label>
+            </div>
+
+            <!-- Message for not attending zone school (hidden by default) -->
+            <div id="not-attend-zone-school-message" class="hidden text-left text-gray-700 text-base leading-relaxed mb-8 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                <p>If you are not attending your zone school, you are considered a Choice Student (attending magnet/charter school) or a Transfer Student (attending a non-zoned traditional school), in most cases.</p>
+            </div>
+
+            <!-- "Find more information here" section, initially visible, hidden when checkbox is checked -->
+            <div id="find-more-info-returning" class="text-left text-gray-700 text-base leading-relaxed mb-8">
+                <h3 class="text-xl font-semibold text-gray-800 mb-4 text-left">Find more information here:</h3>
+                <div class="flex flex-row space-x-4 items-center mb-8 justify-start">
+                    <a href="https://www.ccsdschools.com/registration" target="_blank" rel="noopener noreferrer" class="flex items-center space-x-3 text-blue-700 hover:text-blue-900 font-medium text-lg">
+                        <img src="https://placehold.co/32x32/6366f1/ffffff?text=R" alt="Registration Icon" class="rounded-md">
+                        <span>Registration</span>
+                    </a>
+                    <a href="https://www.ccsdschools.com/departments/operations/transportation" target="_blank" rel="noopener noreferrer" class="flex items-center space-x-3 text-blue-700 hover:text-blue-900 font-medium text-lg">
+                        <img src="https://placehold.co/32x32/3b82f6/ffffff?text=T" alt="Transportation Icon" class="rounded-md">
+                        <span>Transportation</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Duplicated "Select Student Category" dropdown for Registration page -->
+            <label for="registration-student-category-select" class="block text-left text-gray-700 text-base font-medium mb-2 hidden">Select your student type:</label>
+            <div class="relative mb-8 hidden"> <!-- Added hidden to parent div -->
+                <select id="registration-student-category-select" name="registration-student-category" class="block w-full px-4 py-3 pr-8 rounded-lg border-2 border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-800 text-base bg-white">
+                        <option value="">-- Please select --</option>
+                        <option value="Choice">Choice (Magnet/Charter)</option>
+                        <option value="Transfer">Transfer Student</option>
+                    </select>
+            </div>
+
+            <!-- Duplicated content for Choice students in Registration, hidden by default -->
+            <div id="registration-choice-student-content" class="hidden">
+                <h3 class="text-lg font-medium text-blue-500 mb-4" id="registration-choice-heading">RETURNING STUDENT (CHOICE)</h3>
+                <h4 class="text-xl font-semibold text-gray-800 mb-4" id="registration-choice-subheading">This is what you'll need (if not already completed):</h4>
+                <ul class="list-disc list-inside text-left space-y-2 mb-8 pl-4">
+                    <li>1. Submit a Choice application (Opens January-February)</li>
+                    <li id="register-text-registration-choice"></li>
+                    <li>3. Address Verification (Due June 30)</li>
+                </ul>
+                <h3 class="text-xl font-semibold text-gray-800 mb-4 text-left">Find more information here:</h3>
+                <div class="flex flex-row space-x-4 items-center mb-8 justify-start">
+                    <a href="https://www.ccsdschools.com/registration" target="_blank" rel="noopener noreferrer" class="flex items-center space-x-3 text-blue-700 hover:text-blue-900 font-medium text-lg">
+                        <img src="https://placehold.co/32x32/6366f1/ffffff?text=R" alt="Registration Icon" class="rounded-md">
+                        <span>Registration</span>
+                    </a>
+                    <a href="https://www.ccsdschools.com/departments/operations/transportation" target="_blank" rel="noopener noreferrer" class="flex items-center space-x-3 text-blue-700 hover:text-blue-900 font-medium text-lg">
+                        <img src="https://placehold.co/32x32/3b82f6/ffffff?text=T" alt="Transportation Icon" class="rounded-md">
+                        <span>Transportation</span>
+                    </a>
+                    <a href="https://schoolchoice.ccsdschools.com/home" target="_blank" rel="noopener noreferrer" class="flex items-center space-x-3 text-blue-700 hover:text-blue-900 font-medium text-lg">
+                        <img src="https://placehold.co/24x24/4f46e5/ffffff?text=AP" alt="Application Portal Icon" class="ml-2 rounded-md">
+                        <span>Application Portal</span>
+                    </a>
+                </div>
+                <!-- New radio button question for "Are you returning to the same school?" -->
+                <h4 class="text-lg font-medium text-gray-700 mb-4 text-left">Are you returning to the same choice school?</h4>
+                <div class="radio-group mb-8 justify-start">
+                    <label class="radio-option">
+                        <input type="radio" name="returning-school-choice" value="yes" id="returning-school-choice-yes">
+                        <span class="text-lg text-gray-700">Yes</span>
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="returning-school-choice" value="no" id="returning-school-choice-no">
+                        <span class="text-lg text-gray-700">No</span>
+                    </label>
+                </div>
+                <button id="whats-next-returning-choice-button" class="gradient-button text-white font-bold py-3 px-8 rounded-full text-lg shadow-lg hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-blue-300 transition duration-300 ease-in-out mt-4 hidden">
+                    Next
+                </button>
+            </div>
+
+            <!-- Duplicated content for Transfer students in Registration, hidden by default -->
+            <div id="registration-transfer-student-content" class="hidden">
+                <h3 class="text-lg font-medium text-blue-500 mb-4" id="registration-transfer-heading">RETURNING STUDENT (TRANSFER)</h3>
+                <h4 class="text-xl font-semibold text-gray-800 mb-4" id="registration-transfer-subheading">This is what you'll need (if not already completed):</h4>
+                <ul class="list-disc list-inside text-left space-y-2 mb-8 pl-4">
+                    <li>1. Submit a Student Transfer application (Opens March 1-31 and June 1-15)</li>
+                    <li id="register-text-registration-transfer"></li>
+                    <li>3. Address Verification (Due June 30)</li>
+                </ul>
+                <h3 class="text-xl font-semibold text-gray-800 mb-4 text-left">Find more information here:</h3>
+                <div class="flex flex-row space-x-4 items-center mb-8 justify-start">
+                    <a href="https://www.ccsdschools.com/registration" target="_blank" rel="noopener noreferrer" class="flex items-center space-x-3 text-blue-700 hover:text-blue-900 font-medium text-lg">
+                        <img src="https://placehold.co/32x32/6366f1/ffffff?text=R" alt="Registration Icon" class="rounded-md">
+                        <span>Registration</span>
+                    </a>
+                    <a href="https://www.ccsdschools.com/departments/operations/transportation" target="_blank" rel="noopener noreferrer" class="flex items-center space-x-3 text-blue-700 hover:text-blue-900 font-medium text-lg">
+                        <img src="https://placehold.co/32x32/3b82f6/ffffff?text=T" alt="Transportation Icon" class="rounded-md">
+                        <span>Transportation</span>
+                    </a>
+                    <a href="https://schoolchoice.ccsdschools.com/home" target="_blank" rel="noopener noreferrer" class="flex items-center space-x-3 text-blue-700 hover:text-blue-900 font-medium text-lg">
+                        <img src="https://placehold.co/24x24/4f46e5/ffffff?text=AP" alt="Application Portal Icon" class="ml-2 rounded-md">
+                        <span>Application Portal</span>
+                    </a>
+                </div>
+                <!-- New radio button question for "Are you returning to the same school?" -->
+                <h4 class="text-lg font-medium text-gray-700 mb-4 text-left">Are you returning to the same transfer school?</h4>
+                <div class="radio-group mb-8 justify-start">
+                    <label class="radio-option">
+                        <input type="radio" name="returning-school-transfer" value="yes" id="returning-school-transfer-yes">
+                        <span class="text-lg text-gray-700">Yes</span>
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="returning-school-transfer" value="no" id="returning-school-transfer-no">
+                        <span class="text-lg text-gray-700">No</span>
+                    </label>
+                </div>
+                <button id="whats-next-returning-transfer-button" class="gradient-button text-white font-bold py-3 px-8 rounded-full text-lg shadow-lg hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-blue-300 transition duration-300 ease-in-out mt-4 hidden">
+                    Next
+                </button>
+            </div>
+
+            <!-- Buttons for Registration Section -->
+            <div class="flex justify-center mt-8">
+                <button id="back-button-enrollment" class="secondary-button font-bold py-3 px-8 rounded-full text-lg shadow-md hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-gray-300 transition duration-300 ease-in-out">
+                    Back
+                </button>
+                <button id="whats-next-registration-button" class="gradient-button text-white font-bold py-3 px-8 rounded-full text-lg shadow-lg hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-blue-300 transition duration-300 ease-in-out ml-4 hidden">
+                    Next
+                </button>
+                <button id="home-button-registration" class="secondary-button font-bold py-3 px-8 rounded-full text-lg shadow-md hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-gray-300 transition duration-300 ease-in-out ml-4">
+                    Home
+                </button>
+            </div>
+        </div>
+
+        <!-- NEW PAGE: Returning Choice or Transfer Student Section -->
+        <div id="returning-choice-transfer-section" class="hidden">
+            <h2 class="text-2xl font-bold text-blue-700 mb-2 mt-4">RETURNING CHOICE or TRANSFER STUDENT</h2>
+            <h3 class="text-lg font-medium text-gray-700 mb-8" id="returning-student-subtitle"></h3>
+
+            <!-- Conditional content for "Yes" to "Are you returning to the same school?" -->
+            <div id="returning-same-school-yes-content" class="hidden text-left text-gray-700 text-base leading-relaxed">
+                <p class="text-purple-700 font-semibold mb-4">You do not need to submit an application</p>
+                <h4 class="text-xl font-semibold text-gray-800 mb-4">This is what you'll need:</h4>
+                <ul class="list-disc list-inside text-left space-y-2 mb-8 pl-4">
+                    <li>1. Register for the School</li>
+                    <li>2. Address Verification (Due June 30th)</li>
+                </ul>
+                <h3 class="text-xl font-semibold text-gray-800 mb-4 text-left">Find more information here:</h3>
+                <div class="flex flex-row space-x-4 items-center mb-8 justify-start">
+                    <a href="https://www.ccsdschools.com/registration" target="_blank" rel="noopener noreferrer" class="flex items-center space-x-3 text-blue-700 hover:text-blue-900 font-medium text-lg">
+                        <img src="https://placehold.co/32x32/6366f1/ffffff?text=R" alt="Registration Icon" class="rounded-md">
+                        <span>Registration</span>
+                    </a>
+                    <a href="https://www.ccsdschools.com/departments/operations/transportation" target="_blank" rel="noopener noreferrer" class="flex items-center space-x-3 text-blue-700 hover:text-blue-900 font-medium text-lg">
+                        <img src="https://placehold.co/32x32/3b82f6/ffffff?text=T" alt="Transportation Icon" class="rounded-md">
+                        <span>Transportation</span>
+                    </a>
+                    <a href="https://schoolchoice.ccsdschools.com/" target="_blank" rel="noopener noreferrer" class="flex items-center space-x-3 text-blue-700 hover:text-blue-900 font-medium text-lg">
+                        <img src="https://placehold.co/24x24/4f46e5/ffffff?text=AP" alt="Application Portal Icon" class="ml-2 rounded-md">
+                        <span>Application Portal</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Content for this new page when "No" was selected -->
+            <div id="returning-same-school-no-content" class="hidden text-left text-gray-700 text-base leading-relaxed">
+                <h4 class="text-xl font-semibold text-gray-800 mb-4">This is what you'll need:</h4>
+                <ul class="list-disc list-inside text-left space-y-2 mb-8 pl-4">
+                    <li>1. Submit an application (if not done yet): Choice Opens Jan-Feb | Transfers Open March 1-31 & June 1-15</li>
+                    <li>2. Register if offered a seat</li>
+                    <li>3. Address Verification (Due June 30)</li>
+                </ul>
+                <h3 class="text-xl font-semibold text-gray-800 mb-4 text-left">Find more information here:</h3>
+                <div class="flex flex-row space-x-4 items-center mb-8 justify-start">
+                    <a href="https://www.ccsdschools.com/registration" target="_blank" rel="noopener noreferrer" class="flex items-center space-x-3 text-blue-700 hover:text-blue-900 font-medium text-lg">
+                        <img src="https://placehold.co/32x32/6366f1/ffffff?text=R" alt="Registration Icon" class="rounded-md">
+                        <span>Registration</span>
+                    </a>
+                    <a href="https://www.ccsdschools.com/departments/operations/transportation" target="_blank" rel="noopener noreferrer" class="flex items-center space-x-3 text-blue-700 hover:text-blue-900 font-medium text-lg">
+                        <img src="https://placehold.co/32x32/3b82f6/ffffff?text=T" alt="Transportation Icon" class="rounded-md">
+                        <span>Transportation</span>
+                    </a>
+                    <a href="https://schoolchoice.ccsdschools.com/" target="_blank" rel="noopener noreferrer" class="flex items-center space-x-3 text-blue-700 hover:text-blue-900 font-medium text-lg">
+                        <img src="https://placehold.co/24x24/4f46e5/ffffff?text=AP" alt="Application Portal Icon" class="ml-2 rounded-md">
+                        <span>Application Portal</span>
+                    </a>
+                </div>
+            </div>
+
+
+            <button id="back-button-returning-choice-transfer" class="secondary-button font-bold py-3 px-8 rounded-full text-lg shadow-md hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-gray-300 transition duration-300 ease-in-out">
+                Back
+            </button>
+            <button id="whats-next-returning-choice-transfer-button" class="gradient-button text-white font-bold py-3 px-8 rounded-full text-lg shadow-lg hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-blue-300 transition duration-300 ease-in-out ml-4">
+                Next
+            </button>
+            <button id="home-button-returning-choice-transfer" class="secondary-button font-bold py-3 px-8 rounded-full text-lg shadow-md hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-gray-300 transition duration-300 ease-in-out ml-4">
+                Home
+            </button>
+        </div>
+
+        <!-- NEW PAGE: PreK Section -->
+        <div id="prek-section" class="hidden">
+            <h2 class="text-2xl font-bold text-blue-700 mb-2 mt-4">NEW & RETURNING STUDENT (PreK)</h2>
+
+            <h3 class="text-lg font-medium text-blue-700 mb-8 mt-4">
+                Interested in Montessori School?
+            </h3>
+
+            <div class="radio-group mb-8">
+                <label class="radio-option">
+                    <input type="radio" name="montessori-interest" value="yes" id="montessori-yes">
+                    <span class="text-lg text-gray-700">Yes</span>
+                </label>
+                <label class="radio-option">
+                    <input type="radio" name="montessori-interest" value="no" id="montessori-no">
+                    <span class="text-lg text-gray-700">No</span>
+                </label>
+            </div>
+
+            <!-- Content for Montessori Yes -->
+            <div id="montessori-yes-content" class="hidden text-left text-gray-700 text-base leading-relaxed">
+                <h4 class="text-xl font-semibold text-gray-800 mb-4">This is what you'll need:</h4>
+                <div class="mb-8 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                    <ul class="list-disc list-inside text-left space-y-2 pl-4">
+                        <li class="text-blue-700">1. Submit a Choice application (Opens Jan-Feb)</li>
+                        <li class="text-blue-700">2. <strong>Register</strong> if offered a seat and after an email with a SNAP code is received</li>
+                        <li class="text-blue-700">3. Address Verification (Due June 30)</li>
+                    </ul>
+                </div>
+                <h4 class="text-lg font-medium text-gray-700 mb-4 flex items-center justify-start">
+                    <a href="https://schoolchoice.ccsdschools.com/" target="_blank" rel="noopener noreferrer" class="flex items-center space-x-3 text-blue-700 hover:text-blue-900 font-medium text-lg">
+                        <span>Application & More Information</span>
+                        <img src="https://placehold.co/24x24/4f46e5/ffffff?text=I" alt="Information Icon" class="ml-2 rounded-md">
+                    </a>
+                </h4>
+            </div>
+
+            <!-- Content for Montessori No -->
+            <div id="montessori-no-content" class="hidden text-left text-gray-700 text-base leading-relaxed">
+                <h4 class="text-xl font-semibold text-gray-800 mb-4">This is what you'll need:</h4>
+                <div class="mb-8 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                    <ul class="list-disc list-inside text-left space-y-2 pl-4">
+                        <li class="text-blue-700">1. Submit a PreK application (Opens Jan-Oct)</li>
+                        <li class="text-blue-700">2. <strong>Register</strong> if offered a seat and after receiving an email with a SNAP code</li>
+                        <li class="text-blue-700">3. Address Verification (Due June 30)</li>
+                    </ul>
+                </div>
+                <h4 class="text-lg font-medium text-gray-700 mb-4 flex items-center justify-start">
+                    <a href="https://www.ccsdschools.com/schools/early-learning-community/pre-k-child-development/application-page" target="_blank" rel="noopener noreferrer" class="flex items-center space-x-3 text-blue-700 hover:text-blue-900 font-medium text-lg">
+                        <span>Application & More Information</span>
+                        <img src="https://placehold.co/24x24/4f46e5/ffffff?text=P" alt="PreK Icon" class="ml-2 rounded-md">
+                    </a>
+                </h4>
+            </div>
+
+            <button id="back-button-prek" class="secondary-button font-bold py-3 px-8 rounded-full text-lg shadow-md hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-gray-300 transition duration-300 ease-in-out">
+                Back
+            </button>
+            <button id="home-button-prek" class="secondary-button font-bold py-3 px-8 rounded-full text-lg shadow-md hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-gray-300 transition duration-300 ease-in-out ml-4">
+                Home
+            </button>
+        </div>
+
+        <!-- NEW PAGE: CCSD School Options Section -->
+        <div id="ccsd-school-options-section" class="hidden">
+            <h1 class="text-4xl font-extrabold text-blue-800 mb-2">CCSD Student Roadmap</h1>
+            <h2 class="text-2xl font-bold text-blue-700 mb-8 mt-4">CCSD School Options</h2>
+
+            <!-- New checkbox for school attendance zone of interest -->
+            <div class="flex items-center justify-start mb-6">
+                <input type="checkbox" id="zone-of-interest-checkbox" class="form-checkbox h-5 w-5 text-blue-600 rounded focus:ring-blue-500">
+                <label for="zone-of-interest-checkbox" class="ml-2 text-lg text-gray-700 flex items-center">
+                    <img src="https://placehold.co/24x24/FF6347/FFFFFF?text=L" alt="Location Icon" class="rounded-md mr-2">
+                    Select an attendance zone of interest
+                </label>
+            </div>
+
+            <!-- Radio buttons for school zones, hidden by default -->
+            <div id="school-zone-options" class="hidden text-left radio-group-vertical mb-8">
+                <label class="radio-option">
+                    <input type="radio" name="school-zone" value="show-all" id="zone-show-all">
+                    <span class="text-lg text-gray-700">Show all</span>
+                </label>
+                <label class="radio-option">
+                    <input type="radio" name="school-zone" value="north-charleston-ladson" id="zone-north-charleston-ladson">
+                    <span class="text-lg text-gray-700">North Charleston | Ladson</span>
+                </label>
+                <label class="radio-option">
+                    <input type="radio" name="curriculum-focus" value="mcclellanville-mount-pleasant" id="zone-mcclellanville-mount-pleasant">
+                    <span class="text-lg text-gray-700">McClellanville | Mount Pleasant</span>
+                </label>
+                <label class="radio-option">
+                    <input type="radio" name="curriculum-focus" value="james-wadmalaw-johns-ravenel-hollywood-edisto" id="zone-james-wadmalaw-johns-ravenel-hollywood-edisto">
+                    <span class="text-lg text-gray-700">James Island, Wadmalaw, Johns Island | Ravenel, Hollywood, Edisto</span>
+                </label>
+                <label class="radio-option">
+                    <input type="radio" name="curriculum-focus" value="west-ashley-charleston-peninsula" id="zone-west-ashley-charleston-peninsula">
+                    <span class="text-lg text-gray-700">West Ashley | Charleston Peninsula</span>
+                </label>
+            </div>
+
+            <!-- New checkbox for school category -->
+            <div class="flex items-center justify-start mb-6">
+                <input type="checkbox" id="school-category-checkbox" class="form-checkbox h-5 w-5 text-blue-600 rounded focus:ring-blue-500">
+                <label for="school-category-checkbox" class="ml-2 text-lg text-gray-700 flex items-center">
+                    <img src="https://placehold.co/24x24/4CAF50/FFFFFF?text=S" alt="Category Icon" class="rounded-md mr-2">
+                    Select a school category
+                </label>
+            </div>
+
+            <!-- Radio buttons for school category, hidden by default -->
+            <div id="school-category-options" class="hidden text-left radio-group-vertical mb-8">
+                <label class="radio-option">
+                    <input type="radio" name="school-category" value="countywide-magnet-school" id="category-countywide-magnet">
+                    <span class="text-lg text-gray-700">Show all</span>
+                </label>
+                <label class="radio-option">
+                    <input type="radio" name="school-category" value="enrollment-zone-school" id="category-enrollment-zone">
+                    <span class="text-lg text-gray-700">Enrollment zone school (<a href="https://www.croppermap.com/charleston/" target="_blank" rel="noopener noreferrer" class="map-link">check yours per your residence address</a>)</span>
+                </label>
+                <label class="radio-option">
+                    <input type="radio" name="school-category" value="countywide-magnet-school" id="category-countywide-magnet">
+                    <span class="text-lg text-gray-700">Countywide magnet school</span>
+                </label>
+                <label class="radio-option">
+                    <input type="radio" name="school-category" value="attendance-zone-magnet-school" id="category-attendance-zone-magnet">
+                    <span class="text-lg text-gray-700">Attendance zone magnet school</span>
+                </label>
+                 <label class="radio-option">
+                    <input type="radio" name="school-category" value="montessori" id="category-montessori">
+                    <span class="text-lg text-gray-700">Montessori (Applications always needed for PreK and Middle school grades)</span>
+                </label>
+                <label class="radio-option">
+                    <input type="radio" name="school-category" value="charter-school" id="category-charter-school">
+                    <span class="text-lg text-gray-700">Charter school</span>
+                </label>
+                <!-- New note added here -->
+                <p class="text-sm text-gray-500 mt-2">
+                    Note: A Montessori school is an Attendance zone magnet school (Montessori Community School does not have an enrollment zone)
+                </p>
+            </div>
+
+            <!-- New checkbox for school curriculum focus -->
+            <div class="flex items-center justify-start mb-6">
+                <input type="checkbox" id="curriculum-focus-checkbox" class="form-checkbox h-5 w-5 text-blue-600 rounded focus:ring-blue-500">
+                <label for="curriculum-focus-checkbox" class="ml-2 text-lg text-gray-700 flex items-center">
+                    <img src="https://placehold.co/24x24/DAA520/FFFFFF?text=C" alt="Curriculum Icon" class="rounded-md mr-2">
+                    Select a curriculum focus
+                </label>
+            </div>
+
+            <!-- Radio buttons for curriculum focus, hidden by default -->
+            <div id="curriculum-focus-options" class="hidden text-left radio-group-vertical mb-8">
+                <label class="radio-option">
+                    <input type="radio" name="curriculum-focus" value="show-all-curriculum" id="curriculum-show-all">
+                    <span class="text-lg text-gray-700">Show all</span>
+                </label>
+                <label class="radio-option">
+                    <input type="radio" name="curriculum-focus" value="art-focus" id="curriculum-art">
+                    <span class="text-lg text-gray-700">Art Focus</span>
+                </label>
+                <label class="radio-option">
+                    <input type="radio" name="curriculum-focus" value="environment-focus" id="curriculum-environment">
+                    <span class="text-lg text-gray-700">Environment Focus</span>
+                </label>
+                <label class="radio-option">
+                    <input type="radio" name="curriculum-focus" value="science-technology-focus" id="curriculum-science-tech">
+                    <span class="text-lg text-gray-700">Science & Technology Focus</span>
+                </label>
+                <label class="radio-option">
+                    <input type="radio" name="curriculum-focus" value="band-orchestra-option" id="curriculum-band-orchestra">
+                    <span class="text-lg text-gray-700">Band & Orchestra Option</span>
+                </label>
+                <label class="radio-option">
+                    <input type="radio" name="curriculum-focus" value="general-rich-curriculum" id="curriculum-general">
+                    <span class="text-lg text-gray-700">General Rich Curriculum</span>
+                </label>
+            </div>
+
+            <!-- Wrapper for prototype note and button to control indentation -->
+            <div class="text-left pl-4">
+                <!-- Note for prototype -->
+                <div id="prototype-note" class="text-red-600 text-sm font-semibold mb-4 hidden">
+                    For the purpose of this prototype only North Charleston and Art Focus selections above have data to display.
+                </div>
+
+                <!-- New button to show school options -->
+                <button id="show-school-options-button" class="gradient-button text-white font-bold py-3 px-8 rounded-full text-lg shadow-lg hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-blue-300 transition duration-300 ease-in-out mb-8 hidden">
+                    Show School Options
+                </button>
+            </div>
+
+            <!-- Div to display school results -->
+            <div id="school-results" class="text-left text-gray-700 text-base leading-relaxed mb-8 p-4 bg-blue-50 rounded-lg border border-blue-200 hidden">
+                <!-- School options will be displayed here -->
+            </div>
+
+            <button id="back-button-ccsd-options" class="secondary-button font-bold py-3 px-8 rounded-full text-lg shadow-md hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-gray-300 transition duration-300 ease-in-out">
+                Back
+            </button>
+            <button id="whats-next-ccsd-options-button" class="gradient-button text-white font-bold py-3 px-8 rounded-full text-lg shadow-lg hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-blue-300 transition duration-300 ease-in-out ml-4">
+                Next
+            </button>
+            <button id="home-button-ccsd-options" class="secondary-button font-bold py-3 px-8 rounded-full text-lg shadow-md hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-gray-300 transition duration-300 ease-in-out mt-4">
+                Home
+            </button>
+        </div>
+        
+<div id="elem-screen" class="hidden"> 
+     <h1 class="screen-title">Elementary School Learning Opportunities</h1>
+</div>
+
+<div id="elem-screen" class="hidden"> 
+     <h1 class="screen-title">Elementary GT-GTR Learning Opportunities</h1>
+</div>
+
+<div id="middle-screen" class="hidden"> 
+     <h1 class="screen-title">Middle School Learning Opportunities</h1>
+</div>
+
+<div id="highs-screen" class="hidden"> 
+     <h1 class="screen-title">High School Learning Opportunities</h1>
+</div>
+
+        <!-- NEW PAGE: Transportation Information Section -->
+        <div id="transportation-info-section" class="hidden">
+            <h1 class="text-3xl font-extrabold text-blue-800 mb-2">CCSD Student Roadmap</h1>
+            <h2 class="text-2xl font-bold text-blue-700 mb-8 mt-4">Transportation Information</h2>
+
+            <div id="transportation-details-content" class="text-left text-gray-700 text-base leading-relaxed mb-8 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                <p class="mb-2">Transportation is provided to:</p>
+                <ul class="list-disc list-inside ml-4 mb-4">
+                    <li>1. PreK students attending the PreK program</li>
+                    <li>2. Students attending their zone school</li>
+                    <li>3. Students attending a countywide magnet school</li>
+                    <li>4. Students attending a magnet school who reside in the attendance zone of the school</li>
+                    <li>5. Students attending some charter schools (not all provide transportation)</li>
+                </ul>
+                <p class="mb-4">For all other cases, families must provide transportation to and from school.</p>
+                <div class="flex items-center space-x-3 justify-start">
+                    <a href="https://www.ccsdschools.com/departments/operations/transportation" target="_blank" rel="noopener noreferrer" class="text-blue-700 hover:underline font-medium text-lg flex items-center">
+                        <img src="https://placehold.co/32x32/FF8C00/FFFFFF?text=T" alt="Transportation Icon" class="rounded-md mr-2">
+                        See the CCSD Transportation Page for bus stops, the bus app, and other helpful information
+                    </a>
+                </div>
+            </div>
+
+            <button id="back-button-transportation-info" class="secondary-button font-bold py-3 px-8 rounded-full text-lg shadow-md hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-gray-300 transition duration-300 ease-in-out">
+                Back
+            </button>
+            <!-- Removed Next button -->
+            <!-- Removed Home button -->
+        </div>
+
+        <!-- NEW PAGE: Additional Application Scope to Consider Section -->
+        <div id="additional-scope-section" class="hidden">
+            <h1 class="text-3xl font-extrabold text-blue-800 mb-2">CCSD Student Roadmap</h1>
+            <h2 class="text-2xl font-bold text-blue-700 mb-8 mt-4">
+                Additional Application Scope to Consider
+            </h2>
+
+            <div class="text-left text-gray-700 text-base leading-relaxed mb-8">
+                <p class="mb-4">This web app could be expanded to include features such as:</p>
+                <ul class="list-disc list-inside ml-4 mb-4">
+                    <li>1. Roadmap for a middle school student taking advanced courses</li>
+                    <li>2. Roadmap for a high school student interested in math</li>
+                    <li>3. Support options for students needing support in a specific area</li>
+                    <li>4. Tutoring options.</li>
+                    <li>5. Roadmap for a high school student interested in a trade</li>
+                    <li>6. Internship student opportunities and timeline to apply</li>
+                    <li>7. Information on schools offering the Kaleidoscope program</li>
+                    <li>8. And many other use cases</li>
+                </ul>
+            </div>
+
+            <!-- Removed back button from this section -->
+            <button id="home-button-additional-scope" class="secondary-button font-bold py-3 px-8 rounded-full text-lg shadow-md hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-gray-300 transition duration-300 ease-in-out ml-4">
+                Home
+            </button>
+        </div>
+
+        <!-- NEW PAGE: Last Page Section -->
+        <div id="last-page-section" class="hidden">
+            <h2 class="text-2xl font-bold text-blue-700 mb-2 mt-4">All Set!</h2>
+            <h3 class="text-lg text-gray-700 mb-8">Thank you for exploring this prototype 😊</h3>
+
+            <div id="fireworks-display" class="flex flex-col items-center justify-center mt-8">
+                <!-- Removed GIF image tag -->
+            </div>
+
+            <button id="additional-scope-button" class="gradient-button text-white font-bold py-3 px-8 rounded-full text-lg shadow-lg hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-blue-300 transition duration-300 ease-in-out w-3/4 mb-4">
+                Additional Application Scope to Consider
+            </button>
+
+            <div class="flex justify-center mt-8">
+            <button id="home-button-last-page" class="secondary-button font-bold py-3 px-8 rounded-full text-lg shadow-md hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-gray-300 transition duration-300 ease-in-out ml-4">
+                Home
+            </button>
+        </div>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Centralized mapping of all section elements
+            const sections = {
+                welcomeSection: document.getElementById('welcome-section'),
+                studentTypeSection: document.getElementById('student-type-section'),
+                zoneSchoolQuestionSection: document.getElementById('zone-school-question-section'),
+                registrationSection: document.getElementById('registration-section'),
+                additionalProgramsSection: document.getElementById('additional-programs-section'),
+                returningChoiceTransferSection: document.getElementById('returning-choice-transfer-section'),
+                prekSection: document.getElementById('prek-section'),
+                ccsdSchoolOptionsSection: document.getElementById('ccsd-school-options-section'),
+                transportationInfoSection: document.getElementById('transportation-info-section'),
+                additionalScopeSection: document.getElementById('additional-scope-section'),
+                lastPageSection: document.getElementById('last-page-section')
+            };
+
+            // Log any missing sections at startup for debugging
+            for (const key in sections) {
+                if (!sections[key]) {
+                    console.error(`Error: Element with ID '${key}' not found in the HTML.`);
+                }
+            }
+
+            // Destructure sections into individual constants for easier use
+            const { welcomeSection, studentTypeSection, zoneSchoolQuestionSection, registrationSection,
+                    additionalProgramsSection, returningChoiceTransferSection, prekSection,
+                    ccsdSchoolOptionsSection, transportationInfoSection, additionalScopeSection, lastPageSection } = sections;
+
+            // Centralized mapping of other key elements
+            const elements = {
+                gradeSelect: document.getElementById('grade-select'),
+                whatsNextButton: document.getElementById('whats-next-button'),
+                schoolOptionsQuestion: document.getElementById('school-options-question'),
+                schoolOptionsYesRadio: document.getElementById('school-options-yes'),
+                schoolOptionsNoRadio: document.getElementById('school-options-no'),
+                newStudentButton: document.getElementById('new-student-button'),
+                returningStudentButton: document.getElementById('returning-student-button'),
+                zoneSchoolYesRadio: document.getElementById('zone-school-yes'),
+                zoneSchoolNoRadio: document.getElementById('zone-school-no'),
+                registrationAddressInfo: document.getElementById('registration-address-info'),
+                zoneSchoolYesContent: document.getElementById('zone-school-yes-content'),
+                zoneSchoolNoContent: document.getElementById('zone-school-no-content'),
+                studentCategorySelect: document.getElementById('student-category-select'),
+                choiceStudentContent: document.getElementById('choice-student-content'),
+                transferStudentContent: document.getElementById('transfer-student-content'),
+                registerTextChoice: document.getElementById('register-text-choice'),
+                registerTextTransfer: document.getElementById('register-text-transfer'),
+                notAttendZoneSchoolCheckbox: document.getElementById('not-attend-zone-school'),
+                notAttendZoneSchoolMessage: document.getElementById('not-attend-zone-school-message'),
+                registrationStudentCategorySelect: document.getElementById('registration-student-category-select'),
+                registrationChoiceStudentContent: document.getElementById('registration-choice-student-content'),
+                registrationTransferStudentContent: document.getElementById('registration-transfer-student-content'),
+                registerTextRegistrationChoice: document.getElementById('register-text-registration-choice'),
+                registerTextRegistrationTransfer: document.getElementById('register-text-registration-transfer'),
+                registrationChoiceHeading: document.getElementById('registration-choice-heading'),
+                registrationChoiceSubheading: document.getElementById('registration-choice-subheading'),
+                registrationTransferHeading: document.getElementById('registration-transfer-heading'),
+                registrationTransferSubheading: document.getElementById('registration-transfer-subheading'),
+                findMoreInfoReturning: document.getElementById('find-more-info-returning'),
+                returningSchoolChoiceYes: document.getElementById('returning-school-choice-yes'),
+                returningSchoolChoiceNo: document.getElementById('returning-school-choice-no'),
+                returningSchoolTransferYes: document.getElementById('returning-school-transfer-yes'),
+                returningSchoolTransferNo: document.getElementById('returning-school-transfer-no'),
+                returningStudentSubtitle: document.getElementById('returning-student-subtitle'),
+                whatsNextReturningChoiceButton: document.getElementById('whats-next-returning-choice-button'),
+                whatsNextReturningTransferButton: document.getElementById('whats-next-returning-transfer-button'),
+                returningSameSchoolYesContent: document.getElementById('returning-same-school-yes-content'),
+                returningSameSchoolNoContent: document.getElementById('returning-same-school-no-content'),
+                pkLogic: document.getElementById('pk-logic'),
+                k12Logic: document.getElementById('k12-logic'),
+                montessoriYesRadio: document.getElementById('montessori-yes'),
+                montessoriNoRadio: document.getElementById('montessori-no'),
+                montessoriYesContent: document.getElementById('montessori-yes-content'),
+                montessoriNoContent: document.getElementById('montessori-no-content'),
+                zoneOfInterestCheckbox: document.getElementById('zone-of-interest-checkbox'),
+                schoolZoneOptions: document.getElementById('school-zone-options'),
+                schoolZoneRadios: document.querySelectorAll('input[name="school-zone"]'),
+                showSchoolOptionsButton: document.getElementById('show-school-options-button'),
+                schoolResultsDiv: document.getElementById('school-results'),
+                prototypeNote: document.getElementById('prototype-note'),
+                schoolCategoryCheckbox: document.getElementById('school-category-checkbox'),
+                schoolCategoryOptions: document.getElementById('school-category-options'),
+                schoolCategoryRadios: document.querySelectorAll('input[name="school-category"]'),
+                curriculumFocusCheckbox: document.getElementById('curriculum-focus-checkbox'),
+                curriculumFocusOptions: document.getElementById('curriculum-focus-options'),
+                curriculumFocusRadios: document.querySelectorAll('input[name="curriculum-focus"]'),
+                selectedGradeDisplay: document.getElementById('selected-grade-display'),
+                transportationDetailsContent: document.getElementById('transportation-details-content'),
+                additionalScopeButton: document.getElementById('additional-scope-button'),
+                transportationLinkButton: document.getElementById('transportation-link-button'),
+                whatsNextZoneSchoolButton: document.getElementById('whats-next-zone-school-button'), // Corrected ID for the "NEW STUDENT" page's Next button
+                whatsNextCcsdOptionsButton: document.getElementById('whats-next-ccsd-options-button'),
+                whatsNextAdditionalProgramsButton: document.getElementById('whats-next-additional-programs-button'),
+                whatsNextReturningChoiceTransferButton: document.getElementById('whats-next-returning-choice-transfer-button'),
+            };
+
+            // Navigation history stack
+            let sectionHistory = [];
+            let selectedGradeForEnrollment = '';
+
+            /**
+             * Displays a temporary message box at the bottom of the screen.
+             * @param {string} message - The message to display.
+             * @param {string} type - The type of message ('success' or 'error').
+             */
+            function showMessage(message, type) {
+                let messageBox = document.querySelector('.message-box');
+                if (!messageBox) {
+                    messageBox = document.createElement('div');
+                    messageBox.classList.add('message-box');
+                    document.body.appendChild(messageBox);
+                }
+                messageBox.textContent = message;
+                messageBox.className = 'message-box ' + type;
+                messageBox.style.opacity = 0;
+
+                setTimeout(() => {
+                    messageBox.style.opacity = 1;
+                }, 10);
+
+                setTimeout(() => {
+                    messageBox.style.opacity = 0;
+                    messageBox.addEventListener('transitionend', () => messageBox.remove(), { once: true });
+                }, 3000);
+            }
+
+            /**
+             * Hides all sections and displays the specified section.
+             * Manages the navigation history.
+             * @param {HTMLElement} sectionToShow - The section element to display.
+             * @param {boolean} [isBack=false] - True if this is a back navigation, false otherwise.
+             */
+            function showSection(sectionToShow, isBack = false) {
+                const currentVisibleSection = document.querySelector('.container > div:not(.hidden)');
+
+                console.log(`--- showSection called ---`);
+                console.log(`Current visible section: ${currentVisibleSection ? currentVisibleSection.id : 'None'}`);
+                console.log(`Section to show: ${sectionToShow ? sectionToShow.id : 'None'}`);
+                console.log(`Is back navigation: ${isBack}`);
+
+                // Push current section to history only if it's not a back navigation
+                // and it's a valid section to store.
+                if (!isBack && currentVisibleSection && currentVisibleSection.id && currentVisibleSection.id !== '' && currentVisibleSection !== sectionToShow) {
+                    sectionHistory.push(currentVisibleSection.id);
+                    console.log(`Pushed ${currentVisibleSection.id} to history. History:`, sectionHistory);
+                } else if (isBack) {
+                    console.log(`Not pushing to history (back navigation).`);
+                } else {
+                    console.log(`Not pushing to history (no current visible section, or same section, or invalid ID).`);
+                }
+
+                // Hide all sections
+                Object.values(sections).forEach(section => {
+                    if (section) {
+                        section.classList.add('hidden');
+                    }
+                });
+
+                // Control visibility of selectedGradeDisplay
+                if (elements.selectedGradeDisplay) {
+                    if (sectionToShow === welcomeSection || sectionToShow === lastPageSection) {
+                        elements.selectedGradeDisplay.classList.add('hidden');
+                    } else {
+                        elements.selectedGradeDisplay.classList.remove('hidden');
+                        updateSelectedGradeDisplay();
+                    }
+                }
+
+                // Show the target section
+                if (sectionToShow) {
+                    sectionToShow.classList.remove('hidden');
+                    console.log(`Displayed section: ${sectionToShow.id}`);
+                } else {
+                    console.error("Error: Attempted to show a null section element.");
+                }
+                console.log(`Current sectionHistory after showSection:`, sectionHistory);
+                console.log(`--------------------------`);
+            }
+
+            /**
+             * Updates the registration text based on the selected grade (PreK or K-12).
+             * @param {string} targetElementId - The ID of the element to update.
+             */
+            function updateRegisterText(targetElementId) {
+                const targetElement = document.getElementById(targetElementId);
+                if (!targetElement) return;
+
+                if (selectedGradeForEnrollment === 'PreK3' || selectedGradeForEnrollment === 'PreK4') {
+                    targetElement.textContent = '2. Register for the school where you accepted your PreK seat. You must first receive an email with a SNAP code';
+                } else {
+                    if (targetElementId === 'register-text-choice' || targetElementId === 'register-text-registration-choice') {
+                        targetElement.textContent = '2. Register for your zone school (if you accept a Choice seat, the student registration is transferred internally)';
+                    } else if (targetElementId === 'register-text-transfer' || targetElementId === 'register-text-registration-transfer') {
+                        targetElement.textContent = '2. Register for your zone school (if you accept a Transfer seat, the student registration is transferred internally)';
+                    }
+                }
+            }
+
+            /**
+             * Shows the Returning Choice or Transfer Student Details page with conditional content.
+             * @param {boolean} isReturningSameSchool - True if returning to the same school, false otherwise.
+             */
+            function showReturningChoiceTransferPage(isReturningSameSchool) {
+                showSection(returningChoiceTransferSection);
+                if (isReturningSameSchool) {
+                    if (elements.returningStudentSubtitle) elements.returningStudentSubtitle.textContent = '(CONTINUE AS CHOICE OR TRANSFER)';
+                    if (elements.returningSameSchoolYesContent) elements.returningSameSchoolYesContent.classList.remove('hidden');
+                    if (elements.returningSameSchoolNoContent) elements.returningSameSchoolNoContent.classList.add('hidden');
+                } else {
+                    if (elements.returningStudentSubtitle) elements.returningStudentSubtitle.textContent = '(AS NEW CHOICE OR TRANSFER)';
+                    if (elements.returningSameSchoolYesContent) elements.returningSameSchoolYesContent.classList.add('hidden');
+                    if (elements.returningSameSchoolNoContent) elements.returningSameSchoolNoContent.classList.remove('hidden');
+                }
+            }
+
+            /**
+             * Updates the display showing the currently selected student grade.
+             */
+            function updateSelectedGradeDisplay() {
+                if (elements.gradeSelect && elements.gradeSelect.value) {
+                    elements.selectedGradeDisplay.textContent = `Student grade selected: ${elements.gradeSelect.value}`;
+                } else if (elements.selectedGradeDisplay) {
+                    elements.selectedGradeDisplay.textContent = '';
+                }
+            }
+
+            /**
+             * Handles the logic for displaying school options based on user selections.
+             */
+            function displaySchoolOptions() {
+                let selectedZone = '';
+                elements.schoolZoneRadios.forEach(radio => {
+                    if (radio.checked) {
+                        selectedZone = radio.value;
+                    }
+                });
+
+                let selectedCategory = '';
+                elements.schoolCategoryRadios.forEach(radio => {
+                    if (radio.checked) {
+                        selectedCategory = radio.value;
+                    }
+                });
+
+                let selectedCurriculum = '';
+                if (elements.curriculumFocusCheckbox && elements.curriculumFocusCheckbox.checked) {
+                    elements.curriculumFocusRadios.forEach(radio => {
+                        if (radio.checked) {
+                            selectedCurriculum = radio.value;
+                        }
+                    });
+                }
+
+                if (!selectedZone && !selectedCategory && !selectedCurriculum) {
+                    showMessage('Please select a school attendance zone, a school category, or a curriculum focus.', 'error');
+                    return;
+                }
+
+                if (elements.schoolResultsDiv) {
+                    elements.schoolResultsDiv.classList.remove('hidden');
+                    elements.schoolResultsDiv.innerHTML = '';
+                }
+
+                const currentGrade = elements.gradeSelect.value;
+                let gradeNum;
+                if (currentGrade === 'K') {
+                    gradeNum = 0;
+                } else if (currentGrade.startsWith('PreK')) {
+                    gradeNum = -1;
+                } else {
+                    gradeNum = parseInt(currentGrade.replace(/\D/g, ''));
+                }
+
+                // Logic for displaying schools based on selected criteria
+                if (selectedZone === 'north-charleston-ladson') {
+                    if (selectedCurriculum === 'art-focus' && gradeNum === 0) {
+                        const school = { name: 'North Charleston Creative Arts', grades: '(Choice application needed for PreK and if not the zone school for the student)', mapLink: 'https://maps.app.goo.gl/4tgeRpafTc8P3BuK8' };
+                        let schoolsHtml = `<p><strong>North Charleston | Ladson - Art Focus (Kindergarten):</strong></p><ul class="list-disc list-inside ml-4">`;
+                        schoolsHtml += `<li>${school.name} ${school.grades}<a href="${school.mapLink}" target="_blank" rel="noopener noreferrer" class="map-link">View on Map</a></li>`;
+                        schoolsHtml += `</ul>`;
+                        if (elements.schoolResultsDiv) elements.schoolResultsDiv.innerHTML = schoolsHtml;
+                    } else if (gradeNum >= 9 && gradeNum <= 12) {
+                        const schools = [
+                            { name: 'North Charleston High School', grades: '9th-12th grade', mapLink: 'https://maps.app.goo.gl/bsYXvcmHwANRVRkP8' },
+                            { name: 'R.B. Stall High School', grades: '9th-12th grade', mapLink: 'https://maps.app.goo.gl/example-stall' },
+                            { name: 'Academic Magnet High School', grades: '9th-12th grade', mapLink: 'https://maps.app.goo.gl/example-academic' }
+                        ];
+                        let schoolsHtml = `<p><strong>North Charleston | Ladson High Schools:</strong></p><ul class="list-disc list-inside ml-4">`;
+                        schools.forEach((school) => {
+                            schoolsHtml += `<li>${school.name} (${school.grades})${school.mapLink ? `<a href="${school.mapLink}" target="_blank" rel="noopener noreferrer" class="map-link">View on Map</a>` : ''}</li>`;
+                        });
+                        schoolsHtml += `</ul>`;
+                        if (elements.schoolResultsDiv) elements.schoolResultsDiv.innerHTML = schoolsHtml;
+                    } else if ((gradeNum >= 0 && gradeNum <= 5) || currentGrade.startsWith('PreK')) {
+                        const schools = [
+                            { name: 'Pepperhill ES', grades: '', mapLink: 'https://maps.app.goo.gl/qXHgzaBWeaAY5Sh2A' },
+                            { name: 'Midland Park ES', grades: '' },
+                            { name: 'A.C. Corcoran ES', grades: '' },
+                            { name: 'Malcolm C. Hursey Montessori', grades: '(Choice application may be needed)' },
+                            { name: 'Mary Ford Early Learning Center', grades: '(PreK application is needed)' }
+                        ];
+                        let schoolsHtml = `<p><strong>North Charleston | Ladson Elementary Schools:</strong></p><ul class="list-disc list-inside ml-4">`;
+                        schools.forEach((school) => {
+                            schoolsHtml += `<li>${school.name} ${school.grades ? school.grades : ''}${school.mapLink ? `<a href="${school.mapLink}" target="_blank" rel="noopener noreferrer" class="map-link">View on Map</a>` : ''}</li>`;
+                        });
+                        schoolsHtml += `</ul>`;
+                        if (elements.schoolResultsDiv) elements.schoolResultsDiv.innerHTML = schoolsHtml;
+                    } else {
+                        if (elements.schoolResultsDiv) elements.schoolResultsDiv.innerHTML = `<p>No specific school options are listed for the selected zone and grade combination at this time.</p>`;
+                    }
+                } else if (selectedCategory) {
+                    if (elements.schoolResultsDiv) elements.schoolResultsDiv.innerHTML = `<p>Displaying schools for <strong>${selectedCategory.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}</strong> category (details to be added).</p>`;
+                } else if (selectedCurriculum) {
+                    if (elements.schoolResultsDiv) elements.schoolResultsDiv.innerHTML = `<p>Displaying schools with <strong>${selectedCurriculum.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}</strong> focus across all zones (details to be added).</p>`;
+                } else if (selectedZone === 'show-all') {
+                    if (elements.schoolResultsDiv) elements.schoolResultsDiv.innerHTML = `<p>Displaying all school options for grade ${currentGrade} across all zones.</p>`;
+                } else {
+                    if (elements.schoolResultsDiv) elements.schoolResultsDiv.innerHTML = `<p>No specific school options are listed for the selected criteria at this time.</p>`;
+                }
+            }
+
+            /**
+             * Sets up all event listeners for the application.
+             */
+            function setupEventListeners() {
+                if (elements.gradeSelect) {
+                    elements.gradeSelect.addEventListener('change', () => {
+                        if (elements.gradeSelect.value) {
+                            selectedGradeForEnrollment = elements.gradeSelect.value;
+                            if (elements.schoolOptionsQuestion) elements.schoolOptionsQuestion.classList.remove('hidden');
+                            if (elements.whatsNextButton) elements.whatsNextButton.classList.remove('hidden');
+                        } else {
+                            selectedGradeForEnrollment = '';
+                            if (elements.schoolOptionsQuestion) elements.schoolOptionsQuestion.classList.add('hidden');
+                            if (elements.whatsNextButton) elements.whatsNextButton.classList.add('hidden');
+                            if (elements.schoolOptionsYesRadio) elements.schoolOptionsYesRadio.checked = false;
+                            if (elements.schoolOptionsNoRadio) elements.schoolOptionsNoRadio.checked = false;
+                        }
+                    });
+                }
+
+                if (elements.whatsNextButton) {
+                    elements.whatsNextButton.addEventListener('click', () => {
+                        const grade = elements.gradeSelect ? elements.gradeSelect.value : '';
+                        if (grade) {
+                            const isSchoolOptionsYesChecked = elements.schoolOptionsYesRadio && elements.schoolOptionsYesRadio.checked;
+                            const isSchoolOptionsNoChecked = elements.schoolOptionsNoRadio && elements.schoolOptionsNoRadio.checked;
+
+                            if (isSchoolOptionsYesChecked) {
+                                showSection(ccsdSchoolOptionsSection);
+                                if (elements.zoneOfInterestCheckbox) elements.zoneOfInterestCheckbox.checked = false;
+                                if (elements.schoolZoneOptions) elements.schoolZoneOptions.classList.add('hidden');
+                                elements.schoolZoneRadios.forEach(radio => radio.checked = false);
+                                if (elements.schoolCategoryCheckbox) elements.schoolCategoryCheckbox.checked = false;
+                                if (elements.schoolCategoryOptions) elements.schoolCategoryOptions.classList.add('hidden');
+                                elements.schoolCategoryRadios.forEach(radio => radio.checked = false);
+                                if (elements.curriculumFocusCheckbox) elements.curriculumFocusCheckbox.checked = false;
+                                if (elements.curriculumFocusOptions) elements.curriculumFocusOptions.classList.add('hidden');
+                                elements.curriculumFocusRadios.forEach(radio => radio.checked = false);
+                                if (elements.schoolResultsDiv) {
+                                    elements.schoolResultsDiv.classList.add('hidden');
+                                    elements.schoolResultsDiv.innerHTML = '';
+                                }
+                                if (elements.showSchoolOptionsButton) elements.showSchoolOptionsButton.classList.add('hidden');
+                                if (elements.prototypeNote) elements.prototypeNote.classList.add('hidden');
+                            } else if (isSchoolOptionsNoChecked) {
+                                if (grade === 'PreK3' || grade === 'PreK4') {
+                                    showSection(prekSection);
+                                    if (elements.montessoriYesRadio) elements.montessoriYesRadio.checked = false;
+                                    if (elements.montessoriNoRadio) elements.montessoriNoRadio.checked = false;
+                                    if (elements.montessoriYesContent) elements.montessoriYesContent.classList.add('hidden');
+                                    if (elements.montessoriNoContent) elements.montessoriNoContent.classList.add('hidden');
+                                } else {
+                                    showSection(studentTypeSection);
+                                }
+                            } else {
+                                showMessage('Please select an option for school options.', 'error');
+                            }
+                        } else {
+                            showMessage('Please select a grade before proceeding.', 'error');
+                        }
+                    });
+                }
+
+                if (elements.schoolOptionsYesRadio) {
+                    elements.schoolOptionsYesRadio.addEventListener('change', () => {
+                        if (elements.schoolOptionsYesRadio.checked && elements.whatsNextButton) {
+                            elements.whatsNextButton.classList.remove('hidden');
+                        }
+                    });
+                }
+
+                if (elements.schoolOptionsNoRadio) {
+                    elements.schoolOptionsNoRadio.addEventListener('change', () => {
+                        if (elements.schoolOptionsNoRadio.checked && elements.whatsNextButton) {
+                            elements.whatsNextButton.classList.remove('hidden');
+                        }
+                    });
+                }
+
+                if (elements.newStudentButton) {
+                    elements.newStudentButton.addEventListener('click', () => {
+                        showSection(zoneSchoolQuestionSection);
+                        if (elements.zoneSchoolYesRadio) elements.zoneSchoolYesRadio.checked = false;
+                        if (elements.zoneSchoolNoRadio) elements.zoneSchoolNoRadio.checked = false;
+                        if (elements.zoneSchoolYesContent) elements.zoneSchoolYesContent.classList.add('hidden');
+                        if (elements.zoneSchoolNoContent) elements.zoneSchoolNoContent.classList.add('hidden');
+                        if (elements.choiceStudentContent) elements.choiceStudentContent.classList.add('hidden');
+                        if (elements.transferStudentContent) elements.transferStudentContent.classList.add('hidden');
+                        if (elements.studentCategorySelect) elements.studentCategorySelect.value = '';
+                        if (elements.whatsNextZoneSchoolButton) elements.whatsNextZoneSchoolButton.classList.add('hidden'); // Ensure hidden on entry
+                    });
+                }
+
+                if (elements.returningStudentButton) {
+                    elements.returningStudentButton.addEventListener('click', () => {
+                        console.log(`Clicked RETURNING (from last year) button.`);
+                        showSection(registrationSection);
+                        if (selectedGradeForEnrollment === 'PreK3' || selectedGradeForEnrollment === 'PreK4') {
+                            if (elements.pkLogic) elements.pkLogic.classList.remove('hidden');
+                            if (elements.k12Logic) elements.k12Logic.classList.add('hidden');
+                        } else {
+                            if (elements.k12Logic) elements.k12Logic.classList.remove('hidden');
+                            if (elements.pkLogic) elements.pkLogic.classList.add('hidden');
+                        }
+                        if (elements.notAttendZoneSchoolCheckbox) elements.notAttendZoneSchoolCheckbox.checked = false;
+                        if (elements.notAttendZoneSchoolMessage) elements.notAttendZoneSchoolMessage.classList.add('hidden');
+                        if (elements.registrationStudentCategorySelect) {
+                            elements.registrationStudentCategorySelect.value = '';
+                            const parent = elements.registrationStudentCategorySelect.closest('.relative');
+                            const label = parent ? parent.previousElementSibling : null;
+                            if (label) label.classList.add('hidden');
+                            if (parent) parent.classList.add('hidden');
+                        }
+                        if (elements.registrationChoiceStudentContent) elements.registrationChoiceStudentContent.classList.add('hidden');
+                        if (elements.registrationTransferStudentContent) elements.registrationTransferStudentContent.classList.add('hidden');
+                        if (elements.findMoreInfoReturning) elements.findMoreInfoReturning.classList.remove('hidden');
+
+                        // Ensure whatsNextRegistrationButton is hidden by default on entry, then show if applicable
+                        if (elements.whatsNextRegistrationButton) {
+                            elements.whatsNextRegistrationButton.classList.add('hidden');
+                        }
+                        if (elements.notAttendZoneSchoolCheckbox && !elements.notAttendZoneSchoolCheckbox.checked) {
+                            if (elements.whatsNextRegistrationButton) elements.whatsNextRegistrationButton.classList.remove('hidden');
+                        }
+
+                        if (elements.whatsNextReturningChoiceButton) elements.whatsNextReturningChoiceButton.classList.add('hidden');
+                        if (elements.whatsNextReturningTransferButton) elements.whatsNextReturningTransferButton.classList.add('hidden');
+
+                        if (elements.returningSchoolChoiceYes) elements.returningSchoolChoiceYes.checked = false;
+                        if (elements.returningSchoolChoiceNo) elements.returningSchoolChoiceNo.checked = false;
+                        if (elements.returningSchoolTransferYes) elements.returningSchoolTransferYes.checked = false;
+                        if (elements.returningSchoolTransferNo) elements.returningSchoolTransferNo.checked = false;
+                    });
+                }
+
+                if (elements.zoneSchoolYesRadio) {
+                    elements.zoneSchoolYesRadio.addEventListener('change', () => {
+                        if (elements.zoneSchoolYesRadio.checked) {
+                            if (elements.zoneSchoolYesContent) elements.zoneSchoolYesContent.classList.remove('hidden');
+                            if (elements.zoneSchoolNoContent) elements.zoneSchoolNoContent.classList.add('hidden');
+                            if (elements.choiceStudentContent) elements.choiceStudentContent.classList.add('hidden');
+                            if (elements.transferStudentContent) elements.transferStudentContent.classList.add('hidden');
+                            if (elements.studentCategorySelect) elements.studentCategorySelect.value = '';
+                            if (elements.whatsNextZoneSchoolButton) elements.whatsNextZoneSchoolButton.classList.remove('hidden');
+                        }
+                    });
+                }
+
+                if (elements.zoneSchoolNoRadio) {
+                    elements.zoneSchoolNoRadio.addEventListener('change', () => {
+                        if (elements.zoneSchoolNoRadio.checked) {
+                            if (elements.zoneSchoolYesContent) elements.zoneSchoolYesContent.classList.add('hidden');
+                            if (elements.zoneSchoolNoContent) elements.zoneSchoolNoContent.classList.remove('hidden');
+                            if (elements.choiceStudentContent) elements.choiceStudentContent.classList.add('hidden');
+                            if (elements.transferStudentContent) elements.transferStudentContent.classList.add('hidden');
+                            if (elements.whatsNextZoneSchoolButton) elements.whatsNextZoneSchoolButton.classList.remove('hidden');
+                        }
+                    });
+                }
+
+                if (elements.studentCategorySelect) {
+                    elements.studentCategorySelect.addEventListener('change', () => {
+                        if (elements.studentCategorySelect.value === 'Choice') {
+                            if (elements.choiceStudentContent) elements.choiceStudentContent.classList.remove('hidden');
+                            if (elements.transferStudentContent) elements.transferStudentContent.classList.add('hidden');
+                            updateRegisterText('register-text-choice');
+                        } else if (elements.studentCategorySelect.value === 'Transfer') {
+                            if (elements.choiceStudentContent) elements.choiceStudentContent.classList.add('hidden');
+                            if (elements.transferStudentContent) elements.transferStudentContent.classList.remove('hidden');
+                            updateRegisterText('register-text-transfer');
+                        } else {
+                            if (elements.choiceStudentContent) elements.choiceStudentContent.classList.add('hidden');
+                            if (elements.transferStudentContent) elements.transferStudentContent.classList.add('hidden');
+                        }
+                    });
+                }
+
+                if (elements.notAttendZoneSchoolCheckbox) {
+                    elements.notAttendZoneSchoolCheckbox.addEventListener('change', () => {
+                        const regStudentCatSelectParent = elements.registrationStudentCategorySelect ? elements.registrationStudentCategorySelect.closest('.relative') : null;
+                        const regStudentCatLabel = regStudentCatSelectParent ? regStudentCatSelectParent.previousElementSibling : null;
+
+                        if (elements.notAttendZoneSchoolCheckbox.checked) {
+                            if (elements.notAttendZoneSchoolMessage) elements.notAttendZoneSchoolMessage.classList.remove('hidden');
+                            if (regStudentCatLabel) regStudentCatLabel.classList.remove('hidden');
+                            if (regStudentCatSelectParent) regStudentCatSelectParent.classList.remove('hidden');
+                            if (elements.findMoreInfoReturning) elements.findMoreInfoReturning.classList.add('hidden');
+                            // Hide the primary "Next" button if not attending zone school
+                            if (elements.whatsNextRegistrationButton) elements.whatsNextRegistrationButton.classList.add('hidden');
+                        } else {
+                            if (elements.notAttendZoneSchoolMessage) elements.notAttendZoneSchoolMessage.classList.add('hidden');
+                            if (regStudentCatLabel) regStudentCatLabel.classList.add('hidden');
+                            if (regStudentCatSelectParent) regStudentCatSelectParent.classList.add('hidden');
+                            if (elements.registrationStudentCategorySelect) elements.registrationStudentCategorySelect.value = '';
+                            if (elements.registrationChoiceStudentContent) elements.registrationChoiceStudentContent.classList.add('hidden');
+                            if (elements.registrationTransferStudentContent) elements.registrationTransferStudentContent.classList.add('hidden');
+                            if (elements.findMoreInfoReturning) elements.findMoreInfoReturning.classList.remove('hidden');
+                            // Show the primary "Next" button if attending zone school
+                            if (elements.whatsNextRegistrationButton) elements.whatsNextRegistrationButton.classList.remove('hidden');
+                        }
+                    });
+                }
+
+                if (elements.registrationStudentCategorySelect) {
+                    elements.registrationStudentCategorySelect.addEventListener('change', () => {
+                        const selectedCategory = elements.registrationStudentCategorySelect.value;
+
+                        // Hide the primary "Next" button and both specific "Next" buttons initially
+                        if (elements.whatsNextRegistrationButton) elements.whatsNextRegistrationButton.classList.add('hidden');
+                        if (elements.whatsNextReturningChoiceButton) elements.whatsNextReturningChoiceButton.classList.add('hidden');
+                        if (elements.whatsNextReturningTransferButton) elements.whatsNextReturningTransferButton.classList.add('hidden');
+
+                        // Also hide the returning-school radio buttons and their content when category changes
+                        if (elements.returningSchoolChoiceYes) elements.returningSchoolChoiceYes.checked = false;
+                        if (elements.returningSchoolChoiceNo) elements.returningSchoolChoiceNo.checked = false;
+                        if (elements.returningSchoolTransferYes) elements.returningSchoolTransferYes.checked = false;
+                        if (elements.returningSchoolTransferNo) elements.returningSchoolTransferNo.checked = false;
+
+
+                        if (selectedCategory === 'Choice') {
+                            if (elements.registrationChoiceStudentContent) elements.registrationChoiceStudentContent.classList.remove('hidden');
+                            if (elements.registrationTransferStudentContent) elements.registrationTransferStudentContent.classList.add('hidden');
+                            if (elements.registrationChoiceHeading) elements.registrationChoiceHeading.textContent = 'RETURNING STUDENT (CHOICE)';
+                            if (elements.registrationChoiceSubheading) elements.registrationChoiceSubheading.textContent = 'This is what you\'ll need (if not already completed):';
+                            updateRegisterText('register-text-registration-choice');
+                            // Show the Choice-specific Next button immediately
+                            if (elements.whatsNextReturningChoiceButton) elements.whatsNextReturningChoiceButton.classList.remove('hidden');
+
+                        } else if (selectedCategory === 'Transfer') {
+                            if (elements.registrationChoiceStudentContent) elements.registrationChoiceStudentContent.classList.add('hidden');
+                            if (elements.registrationTransferStudentContent) elements.registrationTransferStudentContent.classList.remove('hidden');
+                            // Update class for text color
+                            if (elements.registrationTransferHeading) {
+                                elements.registrationTransferHeading.classList.remove('text-gray-700'); // Remove old color if present
+                                elements.registrationTransferHeading.classList.add('text-blue-500'); // Add new color
+                                elements.registrationTransferHeading.textContent = 'RETURNING STUDENT (TRANSFER)';
+                            }
+                            if (elements.registrationTransferSubheading) elements.registrationTransferSubheading.textContent = 'This is what you\'ll need (if not already completed):';
+                            updateRegisterText('register-text-registration-transfer');
+                            // Show the Transfer-specific Next button immediately
+                            if (elements.whatsNextReturningTransferButton) elements.whatsNextReturningTransferButton.classList.remove('hidden');
+                        } else {
+                            // If no valid option is selected (e.g., "-- Please select --")
+                            if (elements.registrationChoiceStudentContent) elements.registrationChoiceStudentContent.classList.add('hidden');
+                            if (elements.registrationTransferStudentContent) elements.registrationTransferStudentContent.classList.add('hidden');
+                            // Show the primary "Next" button again if the checkbox is unchecked
+                            if (elements.notAttendZoneSchoolCheckbox && !elements.notAttendZoneSchoolCheckbox.checked) {
+                                if (elements.whatsNextRegistrationButton) elements.whatsNextRegistrationButton.classList.remove('hidden');
+                            }
+                        }
+                    });
+                }
+
+                if (elements.whatsNextReturningChoiceButton) {
+                    elements.whatsNextReturningChoiceButton.addEventListener('click', () => {
+                        if ((elements.returningSchoolChoiceYes && elements.returningSchoolChoiceYes.checked) || (elements.returningSchoolChoiceNo && elements.returningSchoolChoiceNo.checked)) {
+                            showReturningChoiceTransferPage(elements.returningSchoolChoiceYes && elements.returningSchoolChoiceYes.checked);
+                        } else {
+                            showMessage('Please select whether you are returning to the same school.', 'error');
+                        }
+                    });
+                }
+
+                if (elements.whatsNextReturningTransferButton) {
+                    elements.whatsNextReturningTransferButton.addEventListener('click', () => {
+                        if ((elements.returningSchoolTransferYes && elements.returningSchoolTransferYes.checked) || (elements.returningSchoolTransferNo && elements.returningSchoolTransferNo.checked)) {
+                            showReturningChoiceTransferPage(elements.returningSchoolTransferYes && elements.returningSchoolTransferYes.checked);
+                        } else {
+                            showMessage('Please select whether you are returning to the same school.', 'error');
+                        }
+                    });
+                }
+
+                // New event listener for the "Next" button on the returning-choice-transfer-section
+                if (elements.whatsNextReturningChoiceTransferButton) {
+                    elements.whatsNextReturningChoiceTransferButton.addEventListener('click', () => {
+                        showSection(additionalProgramsSection);
+                    });
+                }
+
+
+                // Specific back button handler for 'back-button-returning-choice-transfer'
+                const backButtonReturningChoiceTransfer = document.getElementById('back-button-returning-choice-transfer');
+                if (backButtonReturningChoiceTransfer) {
+                    backButtonReturningChoiceTransfer.addEventListener('click', () => {
+                        console.log(`Clicked Back button: back-button-returning-choice-transfer.`);
+                        console.log(`sectionHistory before pop:`, sectionHistory);
+                        if (sectionHistory.length > 0) {
+                            const previousSectionId = sectionHistory.pop(); // Pop the ID
+                            console.log(`Popped ${previousSectionId} from history. History now:`, sectionHistory);
+                            if (previousSectionId && sections[previousSectionId]) {
+                                showSection(sections[previousSectionId], true); // Pass true for back navigation
+                            } else {
+                                console.warn(`Previous section element with ID '${previousSectionId}' not found. Falling back to welcome screen.`);
+                                showSection(welcomeSection, true); // Fallback, also a back navigation
+                                sectionHistory = []; // Clear history if fallback
+                            }
+                        } else {
+                            console.log(`sectionHistory is empty. Going to welcome screen.`);
+                            showSection(welcomeSection, true); // No history, go to welcome, also a back navigation
+                            sectionHistory = []; // Clear history
+                        }
+                    });
+                }
+
+                // Generic back button handler for all other back buttons
+                const handleBackButton = (buttonId) => {
+                    const button = document.getElementById(buttonId);
+                    if (button) {
+                        button.addEventListener('click', () => {
+                            console.log(`Clicked Back button: ${buttonId}.`);
+                            console.log(`sectionHistory before pop:`, sectionHistory);
+                            if (sectionHistory.length > 0) {
+                                const previousSectionId = sectionHistory.pop(); // Pop the ID
+                                console.log(`Popped ${previousSectionId} from history. History now:`, sectionHistory);
+                                if (previousSectionId && sections[previousSectionId]) {
+                                    showSection(sections[previousSectionId], true); // Pass true for back navigation
+                                } else {
+                                    console.warn(`Previous section element with ID '${previousSectionId}' not found. Falling back to welcome screen.`);
+                                    showSection(welcomeSection, true); // Fallback, also a back navigation
+                                    sectionHistory = []; // Clear history if fallback
+                                }
+                            } else {
+                                console.log(`sectionHistory is empty. Going to welcome screen.`);
+                                showSection(welcomeSection, true); // No history, go to welcome, also a back navigation
+                                sectionHistory = []; // Clear history
+                            }
+                        });
+                    }
+                };
+
+
+                // Apply generic back button handler to all back buttons by their IDs, excluding the one handled specifically
+                handleBackButton('back-button-ccsd-options');
+                handleBackButton('back-button-student-type');
+                handleBackButton('back-button-prek');
+                handleBackButton('back-button-zone-school');
+                handleBackButton('back-button-additional-programs');
+                handleBackButton('back-button-transportation-info');
+                // Removed handleBackButton('back-button-additional-scope');
+                handleBackButton('back-button-last-page');
+                handleBackButton('back-button-enrollment'); // This is the one for registration-section
+
+
+                // Home buttons should reset the welcome screen and clear history
+                [
+                    'home-button-returning-choice-transfer',
+                    'home-button-student-type',
+                    'home-button-zone-school',
+                    'home-button-additional-programs',
+                    'home-button-registration',
+                    'home-button-prek',
+                    'home-button-ccsd-options',
+                    'home-button-additional-scope',
+                    'home-button-last-page'
+                ].forEach(buttonId => {
+                    const button = document.getElementById(buttonId);
+                    if (button) {
+                        button.addEventListener('click', () => {
+                            showSection(welcomeSection);
+                            sectionHistory = []; // Clear history when going home
+                            if (elements.gradeSelect) elements.gradeSelect.value = '';
+                            selectedGradeForEnrollment = '';
+                            if (elements.schoolOptionsQuestion) elements.schoolOptionsQuestion.classList.add('hidden');
+                            if (elements.whatsNextButton) elements.whatsNextButton.classList.add('hidden');
+                            if (elements.schoolOptionsYesRadio) elements.schoolOptionsYesRadio.checked = false;
+                            if (elements.schoolOptionsNoRadio) elements.schoolOptionsNoRadio.checked = false;
+                            updateSelectedGradeDisplay();
+                        });
+                    }
+                });
+
+                if (elements.whatsNextCcsdOptionsButton) {
+                    elements.whatsNextCcsdOptionsButton.addEventListener('click', () => {
+                        showSection(studentTypeSection);
+                    });
+                }
+
+                if (elements.additionalScopeButton) {
+                    elements.additionalScopeButton.addEventListener('click', () => {
+                        showSection(additionalScopeSection);
+                    });
+                }
+
+                if (elements.whatsNextAdditionalProgramsButton) {
+                    elements.whatsNextAdditionalProgramsButton.addEventListener('click', () => {
+                        showSection(lastPageSection);
+                    });
+                }
+
+                if (elements.whatsNextZoneSchoolButton) {
+                    elements.whatsNextZoneSchoolButton.addEventListener('click', () => {
+                        showSection(additionalProgramsSection);
+                    });
+                }
+
+                if (elements.transportationLinkButton) {
+                    elements.transportationLinkButton.addEventListener('click', () => {
+                        showSection(transportationInfoSection);
+                    });
+                }
+
+                if (elements.montessoriYesRadio) {
+                    elements.montessoriYesRadio.addEventListener('change', () => {
+                        if (elements.montessoriYesRadio.checked) {
+                            if (elements.montessoriYesContent) elements.montessoriYesContent.classList.remove('hidden');
+                            if (elements.montessoriNoContent) elements.montessoriNoContent.classList.add('hidden');
+                        }
+                    });
+                }
+
+                if (elements.montessoriNoRadio) {
+                    elements.montessoriNoRadio.addEventListener('change', () => {
+                        if (elements.montessoriNoRadio.checked) {
+                            if (elements.montessoriNoContent) elements.montessoriNoContent.classList.remove('hidden');
+                            if (elements.montessoriYesContent) elements.montessoriYesContent.classList.add('hidden');
+                        }
+                    });
+                }
+
+                if (elements.zoneOfInterestCheckbox) {
+                    elements.zoneOfInterestCheckbox.addEventListener('change', () => {
+                        if (elements.zoneOfInterestCheckbox.checked) {
+                            if (elements.schoolZoneOptions) elements.schoolZoneOptions.classList.remove('hidden');
+                            if (elements.showSchoolOptionsButton) elements.showSchoolOptionsButton.classList.remove('hidden');
+                            if (elements.prototypeNote) elements.prototypeNote.classList.remove('hidden');
+                        } else {
+                            if (elements.schoolZoneOptions) elements.schoolZoneOptions.classList.add('hidden');
+                            if (!elements.schoolCategoryCheckbox.checked && !elements.curriculumFocusCheckbox.checked) {
+                                if (elements.showSchoolOptionsButton) elements.showSchoolOptionsButton.classList.add('hidden');
+                                if (elements.prototypeNote) elements.prototypeNote.classList.add('hidden');
+                            }
+                            elements.schoolZoneRadios.forEach(radio => radio.checked = false);
+                            if (elements.schoolResultsDiv) {
+                                elements.schoolResultsDiv.classList.add('hidden');
+                                elements.schoolResultsDiv.innerHTML = '';
+                            }
+                        }
+                    });
+                }
+
+                if (elements.schoolCategoryCheckbox) {
+                    elements.schoolCategoryCheckbox.addEventListener('change', () => {
+                        if (elements.schoolCategoryCheckbox.checked) {
+                            if (elements.schoolCategoryOptions) elements.schoolCategoryOptions.classList.remove('hidden');
+                            if (elements.showSchoolOptionsButton) elements.showSchoolOptionsButton.classList.remove('hidden');
+                            if (elements.prototypeNote) elements.prototypeNote.classList.remove('hidden');
+                        } else {
+                            if (elements.schoolCategoryOptions) elements.schoolCategoryOptions.classList.add('hidden');
+                            elements.schoolCategoryRadios.forEach(radio => radio.checked = false);
+                            if (!elements.zoneOfInterestCheckbox.checked && !elements.curriculumFocusCheckbox.checked) {
+                                if (elements.showSchoolOptionsButton) elements.showSchoolOptionsButton.classList.add('hidden');
+                                if (elements.prototypeNote) elements.prototypeNote.classList.add('hidden');
+                            }
+                        }
+                    });
+                }
+
+                if (elements.curriculumFocusCheckbox) {
+                    elements.curriculumFocusCheckbox.addEventListener('change', () => {
+                        if (elements.curriculumFocusCheckbox.checked) {
+                            if (elements.curriculumFocusOptions) elements.curriculumFocusOptions.classList.remove('hidden');
+                            if (elements.showSchoolOptionsButton) elements.showSchoolOptionsButton.classList.remove('hidden');
+                            if (elements.prototypeNote) elements.prototypeNote.classList.remove('hidden');
+                        } else {
+                            if (elements.curriculumFocusOptions) elements.curriculumFocusOptions.classList.add('hidden');
+                            elements.curriculumFocusRadios.forEach(radio => radio.checked = false);
+                            if (!elements.zoneOfInterestCheckbox.checked && !elements.schoolCategoryCheckbox.checked) {
+                                if (elements.showSchoolOptionsButton) elements.showSchoolOptionsButton.classList.add('hidden');
+                                if (elements.prototypeNote) elements.prototypeNote.classList.add('hidden');
+                            }
+                        }
+                    });
+                }
+
+                if (elements.showSchoolOptionsButton) {
+                    elements.showSchoolOptionsButton.addEventListener('click', displaySchoolOptions);
+                }
+            }
+
+            // Initial state: hide selected grade display on welcome screen
+            if (elements.selectedGradeDisplay) elements.selectedGradeDisplay.classList.add('hidden');
+
+            // Setup all event listeners
+            setupEventListeners();
+
+            // Initial call to show the welcome section
+            showSection(welcomeSection);
+        });
+    </script>
+</body>
+</html>
