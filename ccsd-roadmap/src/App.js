@@ -162,7 +162,7 @@ const CCSDRoadmap = () => {
                     <span>{curriculum}</span>
                   </label>
                 ))}
-                <p className="text-sm text-red-500 mt-2">Prototype data: Only North Charleston & Art Focus combination available</p>
+                <p className="text-sm text-red-500 mt-2">Prototype data: Only North Charleston | Ladson High Schools selection available</p>
               </div>
             )}
           </div>
@@ -170,7 +170,7 @@ const CCSDRoadmap = () => {
         <button onClick={() => setShowSchools(true)} className="w-full px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600">Show School Options</button>
         {showSchools && (
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-            {selectedZone === 'North Charleston | Ladson' && selectedCurriculum === 'Art Focus' ? (
+            {selectedZone === 'North Charleston | Ladson' ? (
               <div>
                 <h3 className="font-bold text-gray-800 mb-3">North Charleston | Ladson High Schools:</h3>
                 <ul className="space-y-2">
@@ -179,7 +179,7 @@ const CCSDRoadmap = () => {
                   <li><span className="font-semibold">Academic Magnet High School</span> (9th-12th grade) <a href="https://www.google.com/maps/search/Academic+Magnet+High+School" target="_blank" rel="noopener noreferrer" className="ml-2 text-blue-600 hover:underline text-sm">View on Map</a></li>
                 </ul>
               </div>
-            ) : <p className="text-gray-700">This combination is still being built. Try 'North Charleston | Ladson' and 'Art Focus'.</p>}
+            ) : <p className="text-gray-700">This combination is still being built. Try 'North Charleston | Ladson'.</p>}
           </div>
         )}
         <div className="flex justify-center gap-4">
